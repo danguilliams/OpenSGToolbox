@@ -6,7 +6,7 @@
  *                                                                           *
  *                            www.opensg.org                                 *
  *                                                                           *
- *   contact:  David Kabala (djkabala@gmail.com), David Naylor               *
+ *   contact: dirk@opensg.org, gerrit.voss@vossg.org, jbehr@zgdv.de          *
  *                                                                           *
 \*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*\
@@ -36,33 +36,34 @@
  *                                                                           *
 \*---------------------------------------------------------------------------*/
 
-#ifndef _OSGSKELETONBLENDEDGEOMETRY_H_
-#define _OSGSKELETONBLENDEDGEOMETRY_H_
+#ifndef _OSGSTACKEDTRANSFORM_H_
+#define _OSGSTACKEDTRANSFORM_H_
 #ifdef __sgi
 #pragma once
 #endif
 
-#include "OSGSkeletonBlendedGeometryBase.h"
-#include "OSGNode.h"
-#include "OSGSkeletonEventDetails.h"
-#include "OSGGeoIntegralProperty.h"
-#include "OSGGeoVectorProperty.h"
+#include "OSGStackedTransformBase.h"
+
+#ifdef OSG_HAVE_ACTION //CHECK
+#include "OSGActorBase.h"
+#endif
 
 OSG_BEGIN_NAMESPACE
 
-/*! \brief SkeletonBlendedGeometry class. See \ref
-           PageDynamicsSkeletonBlendedGeometry for a description.
+/*! \brief StackedTransform class. See \ref
+           PageGroupStackedTransform for a description.
 */
 
-class OSG_TBANIMATION_DLLMAPPING SkeletonBlendedGeometry : public SkeletonBlendedGeometryBase
+class OSG_GROUP_DLLMAPPING StackedTransform : public StackedTransformBase
 {
   protected:
 
     /*==========================  PUBLIC  =================================*/
 
   public:
-    typedef SkeletonBlendedGeometryBase Inherited;
-    typedef SkeletonBlendedGeometry     Self;
+
+    typedef StackedTransformBase Inherited;
+    typedef StackedTransform     Self;
 
     /*---------------------------------------------------------------------*/
     /*! \name                      Sync                                    */
@@ -82,110 +83,31 @@ class OSG_TBANIMATION_DLLMAPPING SkeletonBlendedGeometry : public SkeletonBlende
 
     /*! \}                                                                 */
     /*---------------------------------------------------------------------*/
-    /*! \name               calc the inverse matrix                        */
-    /*! \{                                                                 */
-
-    void initMatrix(const Matrixr        &mToWorld);
-
-    void calcMatrix(const Matrixr        &mToWorld,
-                          Matrixr        &mResult);
-
-    /*! \}                                                                 */
-    /*---------------------------------------------------------------------*/
     /*! \name                   Transformation                             */
     /*! \{                                                                 */
 
     virtual void accumulateMatrix(Matrixr &result);
 
     /*! \}                                                                 */
-    
-    /**************************************************************************//**
-     * @fn	void addJointBlending(const UInt32& PositionIndex,
-     * 		const NodeUnrecPtr TheJoint, const Real32& BlendAmount)
-     * 
-     * @brief	Attaches a point in the mesh to a joint with the given blend weight
-     * 
-     * @param	PositionIndex	Index of the point to be attached.
-     * @param	TheJoint		The joint to which the point is being attached.
-     * @param	BlendAmount		The blend weight.
-    *****************************************************************************/
-    void addJointBlending(UInt32 VertexIndex,
-                          Node* const TheJoint,
-                          Real32 BlendAmount);
-
-    void addJointBlending(UInt32 VertexIndex,
-                          UInt32 JointIndex,
-                          Real32 BlendAmount);
-
-    void addJointBlending(UInt32 VertexIndex,
-                          UInt32 JointIndex,
-                          UInt32 WeightIndex);
-
-   GeoVectorProperty*   getWeights      (void) const;
-   GeoIntegralProperty* getWeightIndexes(void) const;
-
-   void setWeights      (GeoVectorProperty*   const weights);
-   void setWeightIndexes(GeoIntegralProperty* const indexes);
-
-    /**************************************************************************//**
-     * @fn	void skeletonUpdated(void)
-     * 
-     * @brief	Skeleton updated.
-    *****************************************************************************/
-    void skeletonUpdated(void);
-
-    /**************************************************************************//**
-     * @fn	Matrix getAbsoluteTransformation(UInt32 index) const
-     * 
-     * @brief	Gets the absolute transformation of the joint in its current
-     *			position.
-     * 
-     * @return	The joint's absolute transformation matrix. 
-    *****************************************************************************/
-    Matrix getAbsoluteTransformation(UInt32 index) const;
-
-    /**************************************************************************//**
-     * @fn	Matrix getAbsoluteBindTransformation(UInt32 index) const
-     * 
-     * @brief	Gets the bind pose absolute transformation of the joint in its current
-     *			position.
-     * 
-     * @return	The joint's bind pose absolute transformation matrix. 
-    *****************************************************************************/
-    Matrix getAbsoluteBindTransformation(UInt32 index) const;
-
-    Int32 getJointIndex(Node* theJoint) const;
-    Int32 getJointParentIndex(UInt32 index) const;
-
-    UInt32 getNumJoints       (void                    ) const;
-    Node* getJoint           (UInt32 index            ) const;
-    Matrix getJointInvBind    (UInt32 index            ) const; //Locaal space to Joint space
-    void   pushToJoints       (Node* const jointValue,
-                               const Matrix& invBind  );
-    void   removeFromJoints   (UInt32 uiIndex         );
-    void   removeObjFromJoints(Node* const jointValue);
-    void   clearJoints        (void                   );
-
-    virtual void            drawPrimitives      (DrawEnv        *pEnv  );
     /*=========================  PROTECTED  ===============================*/
 
   protected:
 
-    // Variables should all be in SkeletonBlendedGeometryBase.
+    // Variables should all be in StackedTransformBase.
 
     /*---------------------------------------------------------------------*/
     /*! \name                  Constructors                                */
     /*! \{                                                                 */
 
-    SkeletonBlendedGeometry(void);
-    SkeletonBlendedGeometry(const SkeletonBlendedGeometry &source);
+    StackedTransform(void);
+    StackedTransform(const StackedTransform &source);
 
     /*! \}                                                                 */
     /*---------------------------------------------------------------------*/
     /*! \name                   Destructors                                */
     /*! \{                                                                 */
 
-    virtual ~SkeletonBlendedGeometry(void);
+    virtual ~StackedTransform(void);
 
     /*! \}                                                                 */
     /*---------------------------------------------------------------------*/
@@ -203,55 +125,45 @@ class OSG_TBANIMATION_DLLMAPPING SkeletonBlendedGeometry : public SkeletonBlende
 
     /*! \}                                                                 */
     /*---------------------------------------------------------------------*/
-    /*! \name              Draw & Intersect & Render                       */
+    /*! \name              Intersect & Render                              */
     /*! \{                                                                 */
 
 #ifndef OSG_EMBEDDED
-    Action::ResultE intersectEnter(Action *action);
-    Action::ResultE intersectLeave(Action *action);
+    ActionBase::ResultE     intersectEnter(Action    *action);
+    ActionBase::ResultE     intersectLeave(Action    *action);
 #endif
 
-    Action::ResultE renderEnter   (Action *action);
-    Action::ResultE renderLeave   (Action *action);
+    ActionBase::ResultE     renderEnter   (Action    *action);
+    ActionBase::ResultE     renderLeave   (Action    *action);
 
-    /*! \}                                                                 */
-	/**************************************************************************//**
-	 * @fn	void calculatePositions(void)
-	 * 
-	 * @brief	Calculates the positions of the attached meshes based on the
-	 *			current positions of the attached skeletons.
-	*****************************************************************************/
-	void calculatePositions(void);
+#ifdef OSG_HAVE_ACTION //CHECK
+    NewActionTypes::ResultE 
+        intersectActorEnter(ActorBase::FunctorArgumentType &funcArg);
 
-	void calculateJointTransform(void);
+    NewActionTypes::ResultE 
+        intersectActorLeave(ActorBase::FunctorArgumentType &funcArg);
+#endif
 
-    std::vector<Matrix>       _JointPoseTransforms;
-    bool                      _NeedRecalc;
-
-    /**************************************************************************//**
-     * @fn	void produceChangedEvent(void)
-     * 
-     * @brief	Tells all of the skeleton's listeners that an event has occurred. 
-    *****************************************************************************/
-	void produceSkeletonChanged(void);
+    void updateTransform(void);
+    void invalidateTransform(void);
     /*==========================  PRIVATE  ================================*/
 
   private:
-
-    Matrixr _invWorld;
+    Matrix _Transformation;
 
     friend class FieldContainer;
-    friend class SkeletonBlendedGeometryBase;
+    friend class StackedTransformBase;
+    friend class TransformationElement;
 
     // prohibit default functions (move to 'public' if you need one)
-    void operator =(const SkeletonBlendedGeometry &source);
+    void operator =(const StackedTransform &source);
 };
 
-typedef SkeletonBlendedGeometry *SkeletonBlendedGeometryP;
+typedef StackedTransform *StackedTransformP;
 
 OSG_END_NAMESPACE
 
-#include "OSGSkeletonBlendedGeometryBase.inl"
-#include "OSGSkeletonBlendedGeometry.inl"
+#include "OSGStackedTransformBase.inl"
+#include "OSGStackedTransform.inl"
 
-#endif /* _OSGSKELETONBLENDEDGEOMETRY_H_ */
+#endif /* _OSGSTACKEDTRANSFORM_H_ */
